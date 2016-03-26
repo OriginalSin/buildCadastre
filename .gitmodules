@@ -13,3 +13,6 @@
 [submodule "external/leaflet-plugins"]
 	path = external/leaflet-plugins
 	url = git@github.com:OriginalSin/leaflet-plugins.git
+[submodule "external/L.ImageOverlay.Pane"]
+	path = external/L.ImageOverlay.Pane
+	url = git@github.com:ScanEx/L.ImageOverlay.Pane.git

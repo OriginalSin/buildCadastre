@@ -2,9 +2,10 @@ var depsJS = [
     "external/leaflet/leaflet.js",
 
     "external/Leaflet-GeoMixer/src/Deferred.js",
-    "external/Leaflet-GeoMixer/src/gmxAPIutils.js",
+    "external/Leaflet-GeoMixer/src/Utils.js",
 
-    "external/L.Cadastre/src/L.ImageOverlay.Pane.js",
+    "external/L.ImageOverlay.Pane/src/L.ImageOverlay.Pane.js",
+
     "external/L.Cadastre/src/L.Cadastre.js",
     "external/L.Cadastre/src/L.Cadastre.Info.js",
 
