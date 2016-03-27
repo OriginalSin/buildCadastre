@@ -1,0 +1,74 @@
+        html, body, .infoPanel, #cadastreCalcWidget {
+            height: 100%;
+            width: 100%;
+            margin: 0px;
+        }
+        #cadastreCalcWidget {
+            width: 70%;
+        }
+
+        .infoPanel {
+            position: relative;
+        }
+
+        .info {
+            width: 30%;
+            position: absolute;
+            right: 0px;
+            top: 0px;
+        }
+        #b_calc {
+            background: #e5f0fc;
+            border-radius: 5px;
+            box-shadow: 0 1px 7px rgba(0,0,0,0.65);
+            padding: 1px 7px;
+        }
+        #b_calc p {
+            font-family: cursive;
+        }
+        #b_calc h3 {
+            text-align: center;
+        }
+        #b_calc input[type="text"] {
+            width: 120px;
+            padding: 1px 7px;
+            border: 1px solid #aaa;
+            font-size: 100%;
+        }
+        #resultString {
+            background-color: bisque;
+            border-radius: 5px;
+            box-shadow: 0 1px 7px rgba(0,0,0,0.65);
+            padding: 10px;
+        }
+        #infoReestr b {
+            font-family: cursive;
+        }
+        #infoReestr {
+            border-radius: 5px;
+            box-shadow: 0 1px 7px rgba(0,0,0,0.65);
+            padding: 2px;
+        }
+        #resultString, #infoBlock, #recStatus, #infoReestr {
+            display: none;
+        }
+        #recStatus {
+            color: red;
+        }
+        .leaflet-image-layer {
+            opacity: 0.3;
+        }
+        #reclamBlock {
+            position: relative;
+            min-height: 30px;
+        }
+        .recUsl {
+            position: absolute;
+            right: 0px;
+        }
+        .recItem {
+            position: absolute;
+            left: 0px;
+            right: 0px;
+            top: 30px;
+        }

@@ -40,7 +40,7 @@ exports.build = function () {
 
 	console.log('Compressing...');
 
-	var path = pathPart + '-min.js',
+	var path = pathPart + 'CalcWidget.js',
 		newCompressed = UglifyJS.minify(newSrc, {
 			warnings: true,
 			fromString: true
@@ -56,7 +56,7 @@ exports.build = function () {
 
 	var newSrc = combineFiles(depsCSS),
 	    pathPart = 'dist/css/cadastre',
-	    srcPath = pathPart + '.css';
+	    srcPath = pathPart + 'CalcWidget.css';
 
 	console.log('\tCSS size: ' + newSrc.length + ' bytes');
 

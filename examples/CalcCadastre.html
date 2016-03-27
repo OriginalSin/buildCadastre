@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Cadastre calculator</title>
+	<meta charset="utf-8" />
+
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+	<script src="http://maps.google.com/maps/api/js?v=3"></script>
+    <link rel="stylesheet" href="../dist/css/cadastre.css" />
+</head>
+<body>
+    <div class="infoPanel">
+        <div id="map"></div>
+        <div class="info">
+            <form id="b_calc">
+                <h3>Калькулятор земельного налога</h3>
+                <p>Кадастровый номер:<br><input type="text" name="CAD_NUM" value="50:26:0100302:41" /><input type="button" value="Показать на карте" name="search" onclick="find(this);" /></p>
+                <div id="infoBlock">
+                    <p id="recStatus">Заданный кадастровый номер не найден (попытайтесь найти ваш участок на карте, либо введите данные в ручную)</p>
+                    <p>Кадастровая стоимость:<br><input type="text" name="CAD_COST" value="0" /> руб.</p>
+                    <div id="infoReestr">
+                        <p>Площадь: <b id="AREA_VALUE">0</b> кв.м.</p>
+                        <p>Дата обновления: <b id="ACTUAL_DATE"></b></p>
+                        <p>Адрес (местоположение):<br><b id="OBJECT_ADDRESS"></b></p>
+                        <p>Вид разрешенного использования:<br><b id="UTIL_BY_DOC"></b></p>
+                    </div>
+                    <p>Налоговая ставка:<br><input type="text" name="prc" value="0.3" style="width: 30px;" />%<br>(уточнить ставку можно <a href="https://www.nalog.ru/rn50/service/tax/" target="_blank">тут</a>)</p>
+                    <input type="button" value="Рассчитать" name="calcButton" />
+                    <p id="resultString">Величина налога:<br><b id="result">0</b> руб.</p>
+                </div>
+            </form>
+            <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+            <!-- For maps -->
+            <ins class="adsbygoogle"
+                 style="display:inline-block;width:320px;height:100px"
+                 data-ad-client="ca-pub-3088886844438889"
+                 data-ad-slot="8884609976"></ins>
+            <script>
+            (adsbygoogle = window.adsbygoogle || []).push({});
+            </script>
+        </div>
+    </div>
+
+    <script src="../dist/cadastre-min.js"></script>
+</body>
+</html>
