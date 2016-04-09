@@ -93,6 +93,7 @@
     }
 
     function numberFormat(_number, _cfg) {
+        if (!_number) { return ''; }
 
         function obj_merge(obj_first, obj_second) {
             var obj_return = {};
@@ -171,14 +172,16 @@
             recStatus.style.display = 'none';
             infoReestr.style.display = 'block';
             attr = data.attributes;
-            var attrDate = new Date(attr.ACTUAL_DATE);
 
             form.CAD_NUM.value = attr.CAD_NUM;
             document.getElementById('AREA_VALUE').innerHTML = numberFormat(attr.AREA_VALUE, { decimals: 0, thousands_sep: " " });
             form.CAD_COST.value = numberFormat(attr.CAD_COST, { decimals: 2, thousands_sep: " " });
-            document.getElementById('OBJECT_ADDRESS').innerHTML = attr.OBJECT_ADDRESS;
-            document.getElementById('ACTUAL_DATE').innerHTML = formatDate(attrDate.getDate(), attrDate.getMonth() + 1, attrDate.getFullYear());
-            document.getElementById('UTIL_BY_DOC').innerHTML = attr.UTIL_BY_DOC;
+            document.getElementById('OBJECT_ADDRESS').innerHTML = attr.OBJECT_ADDRESS || '';
+            if (attr.ACTUAL_DATE) {
+                var attrDate = new Date(attr.ACTUAL_DATE);
+                document.getElementById('ACTUAL_DATE').innerHTML = formatDate(attrDate.getDate(), attrDate.getMonth() + 1, attrDate.getFullYear());
+            }
+            document.getElementById('UTIL_BY_DOC').innerHTML = attr.UTIL_BY_DOC || '';
         },
         imageOverlayOptions: {opacity: 0.2}
     }).addTo(map);
