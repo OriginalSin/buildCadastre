@@ -4,7 +4,7 @@
         <div class="info">\
             <form id="b_calc">\
                 <h3>Калькулятор земельного налога</h3>\
-                <p>Кадастровый номер:<br><input type="text" name="CAD_NUM" value="50:26:0100302:41" /><input type="button" value="Показать на карте" name="search" onclick="find(this);" /></p>\
+                <p>Кадастровый номер:<br><input type="text" name="CAD_NUM" value="50:26:0110121:27" /><input type="button" value="Показать на карте" name="search" onclick="find(this);" /><br>(либо выбрать земельный участок на карте)</p>\
                 <div id="infoBlock">\
                     <p id="recStatus">Заданный кадастровый номер не найден (попытайтесь найти ваш участок на карте, либо введите данные в ручную)</p>\
                     <p>Кадастровая стоимость:<br><input type="text" name="CAD_COST" value="0" /> руб.</p>\
@@ -34,16 +34,33 @@
     </div>';
 
     document.writeln(str);
+    function getParam() {
+        var out = {},
+            t = document.URL.toString(),
+            arr = t.substring(t.lastIndexOf('?') + 1).split(/\&/);
+        arr.map(function (it) {
+            var p = it.split(/\=/); 
+            out[p[0]] = p[1];
+        });
+        return out;
+    }
+
     var container = document.getElementById('cadastreCalcWidget');
     var osm = L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
         maxZoom: 23,
         maxNativeZoom: 18,
         attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>'
     });
+    var param = getParam(),
+        bl = param.bl || 'osm',
+        x = param.x || 36.62858426570892,
+        y = param.y || 55.481092412215894,
+        z = param.z || 18;
+
     var map = new L.Map(container, {
-        layers: [osm],
-        center: [55.42047282577754, 36.60383552312851],
-        zoom: 18
+        layers: [],
+        center: [y, x],
+        zoom: z
     });
     var attr = {};
     var STR_PAD_LEFT = 1;
@@ -165,21 +182,31 @@
         },
         imageOverlayOptions: {opacity: 0.2}
     }).addTo(map);
-
+    var google = new L.Google();
     L.control.layers({
         OSM: osm,
-        Google: new L.Google()
+        Google: google
     }, {
         Кадастр: cadastreLayer
-    }, {collapsed: true, autoZIndex: false}).addTo(map);
+    }, {collapsed: !L.Browser.mobile, autoZIndex: false}).addTo(map);
+
+    map.addLayer(bl === 'osm' ? osm : google);
 
     map.addControl(new L.Control.gmxIcon({
         id: 'getWidget',
         text: 'Виджет',
         title: 'Получить код для вставки на свой сайт'
      }).on('click', function () {
+        var url = 'http://russian-face.ru/cadastre/addWidgetCalc.js',
+            c = map.getCenter(),
+            z = map.getZoom(),
+            bl = map.hasLayer(osm) ? 'osm' : 'google';
+        url += '?z=' + z;
+        url += '&x=' + c.lng;
+        url += '&y=' + c.lat;
+        url += '&bl=' + bl;
         var str = '<div id="cadastreCalcWidget" style="width: 1080px; height: 800px;">' +
-            '<script src="http://russian-face.ru/cadastre/addWidgetCalc.js"></script>' +
+            '<script src="' + url + '"></script>' +
             '</div>';
         window.prompt('Скопируйте текст для вставки на свой сайт:', str);
      }));

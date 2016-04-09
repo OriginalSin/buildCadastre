@@ -16,3 +16,6 @@
 [submodule "external/L.ImageOverlay.Pane"]
 	path = external/L.ImageOverlay.Pane
 	url = git@github.com:ScanEx/L.ImageOverlay.Pane.git
+[submodule "external/L.AdSense"]
+	path = external/L.AdSense
+	url = git@github.com:OriginalSin/L.AdSense.git
