@@ -5,13 +5,16 @@
             <form id="b_calc">\
                 <h3>Калькулятор земельного налога</h3>\
                 <p>Кадастровый номер:<br><input type="text" name="CAD_NUM" value="50:26:0110121:27" /><input type="button" value="Показать на карте" name="search" onclick="find(this);" /><br>(либо выбрать земельный участок на карте)</p>\
+                <div id="infoError">\
+                    <p id="errStatus">Расчет по кадастровым кварталам и районам не производится (измените масштаб карты чтобы найти ваш участок, либо введите кадастровый номер участка)</p>\
+                </div>\
                 <div id="infoBlock">\
-                    <p id="recStatus">Заданный кадастровый номер не найден (попытайтесь найти ваш участок на карте, либо введите данные в ручную)</p>\
                     <p>Кадастровая стоимость:<br><input type="text" name="CAD_COST" value="0" /> руб.</p>\
                     <div id="infoReestr">\
                         <p>Площадь: <b id="AREA_VALUE">0</b> кв.м.</p>\
                         <p>Дата обновления: <b id="ACTUAL_DATE"></b></p>\
                         <p>Адрес (местоположение):<br><b id="OBJECT_ADDRESS"></b></p>\
+                        <p>Форма собственности:<br><b id="FORM_RIGHTS"></b></p>\
                         <p>Вид разрешенного использования:<br><b id="UTIL_BY_DOC"></b></p>\
                     </div>\
                     <p>Налоговая ставка:<br><input type="text" name="prc" value="0.3" style="width: 30px;" />%<br>(уточнить ставку можно <a href="https://www.nalog.ru/rn50/service/tax/" target="_blank">тут</a>)</p>\
@@ -53,6 +56,7 @@
     });
     var param = getParam(),
         bl = param.bl || 'osm',
+        cadNum = param.CAD_NUM || param.cad || param.cadNum,
         x = param.x || 36.62858426570892,
         y = param.y || 55.481092412215894,
         z = param.z || 18;
@@ -139,8 +143,8 @@
     };
     var form = document.getElementById('b_calc'),
         infoBlock = document.getElementById('infoBlock'),
+        infoError = document.getElementById('infoError'),
         resultString = document.getElementById('resultString'),
-        recStatus = document.getElementById('recStatus'),
         infoReestr = document.getElementById('infoReestr'),
         result = document.getElementById('result');
     form.calcButton.onclick = function () {
@@ -155,33 +159,49 @@
         cadastreLayer.info.cadastreSearch(form.CAD_NUM.value);
     };
     form.CAD_NUM.onfocus = function () {
-        recStatus.style.display = 'none';
+        infoError.style.display = 'none';
     };
+    if (cadNum) { form.CAD_NUM.value = cadNum; }
     var cadastreLayer = new L.Cadastre(null, {
         attribution: '&copy; <a href="http://russian-face.ru/">Widgets</a>',
         infoMode: true,
         onClick: function (ev) {
             infoBlock.style.display = 'block';
-            resultString.style.display = 'block';
-            recStatus.style.display = 'block';
-            result.innerHTML = '0';
-            var data = ev.features[0];
-            if (!data) {
+            infoError.style.display = 'none';
+            var data = ev.feature;
+            if (!data || !data.attrs || !data.attrs.cad_cost) {
+                infoBlock.style.display = 'none';
+                infoError.style.display = 'block';
                 return;
             }
-            recStatus.style.display = 'none';
+            resultString.style.display = 'block';
+            result.innerHTML = '0';
             infoReestr.style.display = 'block';
-            attr = data.attributes;
+            attr = data.attrs;
 
-            form.CAD_NUM.value = attr.CAD_NUM;
-            document.getElementById('AREA_VALUE').innerHTML = numberFormat(attr.AREA_VALUE, { decimals: 0, thousands_sep: " " });
-            form.CAD_COST.value = numberFormat(attr.CAD_COST, { decimals: 2, thousands_sep: " " });
-            document.getElementById('OBJECT_ADDRESS').innerHTML = attr.OBJECT_ADDRESS || '';
-            if (attr.ACTUAL_DATE) {
-                var attrDate = new Date(attr.ACTUAL_DATE);
-                document.getElementById('ACTUAL_DATE').innerHTML = formatDate(attrDate.getDate(), attrDate.getMonth() + 1, attrDate.getFullYear());
+            form.CAD_NUM.value = attr.id;
+            document.getElementById('AREA_VALUE').innerHTML = numberFormat(attr.area_value, { decimals: 0, thousands_sep: " " });
+            form.CAD_COST.value = numberFormat(attr.cad_cost, { decimals: 2, thousands_sep: " " });
+            document.getElementById('OBJECT_ADDRESS').innerHTML = attr.address || '';
+
+            var sDate = 'не определена';
+            var dt = attr.pubdate; if (typeof(dt) === 'string') { dt = dt.replace(/ /g, ''); }
+            if (!dt) { dt = attr.adate; if (typeof(dt) === 'string') { dt = dt.replace(/ /g, ''); } }
+            if (dt) {
+                sDate = dt;
+                // var attrDate = new Date(dt);
+                // sDate = formatDate(attrDate.getDate(), attrDate.getMonth() + 1, attrDate.getFullYear());
             }
-            document.getElementById('UTIL_BY_DOC').innerHTML = attr.UTIL_BY_DOC || '';
+            document.getElementById('ACTUAL_DATE').innerHTML = sDate;
+            if (attr.rights_reg) {
+                var FORM_RIGHTS = {
+                    '100': 'частная',
+                    '200': 'публичная',
+                    '300': '«частная и публичная»'
+                };
+                document.getElementById('FORM_RIGHTS').innerHTML = FORM_RIGHTS[attr.fp] || 'не определена';
+            }
+            document.getElementById('UTIL_BY_DOC').innerHTML = attr.util_by_doc || '';
         },
         imageOverlayOptions: {opacity: 0.2}
     }).addTo(map);
@@ -208,9 +228,29 @@
         url += '&x=' + c.lng;
         url += '&y=' + c.lat;
         url += '&bl=' + bl;
+        if (form.CAD_NUM.value) { url += '&cad=' + form.CAD_NUM.value; }
+
         var str = '<div id="cadastreCalcWidget" style="width: 1080px; height: 800px;">' +
             '<script src="' + url + '"></script>' +
             '</div>';
         window.prompt('Скопируйте текст для вставки на свой сайт:', str);
+     }));
+
+    map.addControl(new L.Control.gmxIcon({
+        id: 'getLink',
+        text: 'Ссылка',
+        title: 'Получить ссылку'
+     }).on('click', function () {
+        var url = 'http://russian-face.ru/cadastre/cadastreCalc.html',
+            c = map.getCenter(),
+            z = map.getZoom(),
+            bl = map.hasLayer(osm) ? 'osm' : 'google';
+        url += '?z=' + z;
+        url += '&x=' + c.lng;
+        url += '&y=' + c.lat;
+        url += '&bl=' + bl;
+        if (form.CAD_NUM.value) { url += '&cad=' + form.CAD_NUM.value; }
+
+        window.prompt('Скопируйте текст для вставки на свой сайт:', url);
      }));
 })();

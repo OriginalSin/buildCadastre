@@ -16,7 +16,7 @@ function hint(msg, args) {
 }
 
 desc('Check Leaflet source for errors with ESLint');
-task('lint', {async: true}, hint('Checking for JS errors...', 'external --ext .js --config build/eslintrc.json'));
+task('lint', {async: true}, hint('Checking for JS errors...', 'external --ext .js'));
 
 desc('Combine and compress Cadastre source files');
 task('build', build.build);

@@ -30,7 +30,7 @@
             text-align: center;
         }
         #b_calc input[type="text"] {
-            width: 120px;
+            width: 150px;
             padding: 1px 7px;
             border: 1px solid #aaa;
             font-size: 100%;
@@ -52,8 +52,9 @@
         #resultString, #infoBlock, #recStatus, #infoReestr {
             display: none;
         }
-        #recStatus {
+        #infoError {
             color: red;
+            display: none;
         }
         .leaflet-image-layer {
             opacity: 0.3;
